@@ -1,9 +1,7 @@
 /* Utilisation du capteur Ultrason HC-SR04 */
 #include <Servo.h>
-#include <Chrono.h>
 
 Servo servo;
-SuperChrono chrono;
 
 // définition des broches utilisées
 int angle = 0;
@@ -12,7 +10,7 @@ int echo = 11;
 long lecture_echo;
 long cm;
 int threshold = 8;
-int priereManequin = false;
+bool descenteMannequin = true;
 
 void setup()
 {
@@ -31,10 +29,23 @@ void loop()
   lecture_echo = pulseIn(echo, HIGH);
   cm = lecture_echo / 58;
   Serial.println(cm);
-  delay(20);
+
+  if(cm <= threshold && descenteMannequin == true) {
+    descenteMannequin = false;
+    remonterMannequin();
+  }
+  
+  if (descenteMannequin == false && angle == 0) {
+    descenteMannequin = true;
+    descendreMannequin();
+  }
 }
 
-void prier(int distance) {
-  
+void remonterMannequin () {
+  servo.write(angle = angle -1);
+}
+
+void descendreMannequin () {
+  servo.write(angle = angle + 1);
 }
 
